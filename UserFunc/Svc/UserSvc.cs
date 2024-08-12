@@ -10,5 +10,9 @@ public class UserSvc(
     {
         return await repo.SimpleList();
     }
+    public Task Create(User user)
+    {
+        return repo.Create(user);
+    }
 }
 

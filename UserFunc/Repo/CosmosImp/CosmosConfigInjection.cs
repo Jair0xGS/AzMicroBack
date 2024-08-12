@@ -9,6 +9,7 @@ public static class CosmosConfigInjection
     )
     {
         services.AddScoped<IUserRepo, UserCosmosRepo>();
+        services.AddSingleton<CosmosConnectionFactory>();
         return services;
     }
 }
