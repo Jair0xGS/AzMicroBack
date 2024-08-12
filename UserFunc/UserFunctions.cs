@@ -10,11 +10,24 @@ namespace UserFunc
         UserSvc userSvc,
         ILogger<UserFunctions> logger)
     {
-        [Function("UserFunctions")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
+        [Function("ListUsers")]
+        public async Task<IActionResult> List([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             logger.LogInformation("C# HTTP trigger function processed a request.");
-            return new OkObjectResult(userSvc.SimpleList());
+            return new OkObjectResult(await userSvc.SimpleList());
+        }
+        [Function("CreateUser")]
+        public async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Function,  "post")] HttpRequest req)
+        {
+            logger.LogInformation("C# HTTP trigger function processed a request.");
+            return new OkObjectResult(await userSvc.SimpleList());
+        }
+        
+        [Function("UpdateUser")]
+        public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Function,  "put")] HttpRequest req)
+        {
+            logger.LogInformation("C# HTTP trigger function processed a request.");
+            return new OkObjectResult(await userSvc.SimpleList());
         }
     }
 }

@@ -6,9 +6,9 @@ namespace UserFunc.Svc;
 public class UserSvc(
     IUserRepo repo)
 {
-    public IEnumerable<User> SimpleList()
+    public async Task<IEnumerable<User>> SimpleList()
     {
-        return repo.SimpleList();
+        return await repo.SimpleList();
     }
 }
 

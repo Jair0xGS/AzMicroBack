@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using UserFunc.Config;
+using UserFunc.Repo.CosmosImp;
+using UserFunc.Svc;
 
 var config =new ConfigurationBuilder()
     .AddEnvironmentVariables()
@@ -16,6 +18,8 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddPersistenceConfig(config);
+        services.AddRepoImps();
+        services.AddSvcImps();
     })
     .Build();
 
