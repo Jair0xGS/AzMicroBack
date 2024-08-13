@@ -1,8 +1,11 @@
+using Newtonsoft.Json;
+
 namespace UserFunc.Model;
 
 public class User
 {
-  public string UserId { get; set; } = Guid.NewGuid().ToString();
+  [JsonProperty(PropertyName = "id")]
+  public string Id { get; set; } = Guid.NewGuid().ToString();
   public string RoleId { get; set; } = "";
   public string UserName { get; set; } = "";
   private string Password { get; set; } = "";

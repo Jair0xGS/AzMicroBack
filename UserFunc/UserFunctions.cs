@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using UserFunc.Model;
 using UserFunc.Svc;
 
@@ -16,7 +17,7 @@ public class UserFunctions(
     {
         try
         {
-            logger.LogInformation("C# HTTP trigger function processed a request.");
+            logger.LogInformation("ListUsers http trigger");
             var rs =await userSvc.SimpleList();
             return new OkObjectResult(rs);
         }catch(Exception ex){
@@ -28,31 +29,22 @@ public class UserFunctions(
     [Function("CreateUser")]
     public async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
     {
-        logger.LogInformation("C# HTTP trigger function processed a request.");
-        await userSvc.Create(new User
+        logger.LogInformation("Create User http trigger");
+        var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        var newUser = JsonConvert.DeserializeObject<User>(requestBody);
+
+        if (newUser is null || string.IsNullOrEmpty(newUser.Id))
         {
-            UserId = Guid.NewGuid().ToString(),
-            RoleId = "",
-            UserName = "jose",
-            Name = "dd",
-            LastName = "dfff",
-            DocumentType = "ddd",
-            DocumentNumber = "ddd",
-            Gender = "aaa",
-            PhoneNumber = "ssdasd",
-            Enabled = true,
-            EmailVerificationDate = DateTime.Now,
-            ResetToken = null,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
-        });
+            return new BadRequestObjectResult("Invalid user data.");
+        }
+        await userSvc.Create(newUser);
         return new OkObjectResult("success");
     }
 
     [Function("UpdateUser")]
     public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Function, "put")] HttpRequest req)
     {
-        logger.LogInformation("C# HTTP trigger function processed a request.");
+        logger.LogInformation("UpdateUser http trigger");
         return new OkObjectResult(await userSvc.SimpleList());
     }
 }

@@ -20,7 +20,7 @@ public class UserCosmosRepo(CosmosConnectionFactory connectionFactory):IUserRepo
 
     public async Task Update(User user)
     {
-        await connectionFactory.GetContainer().UpsertItemAsync(user, new PartitionKey(user.UserId));
+        await connectionFactory.GetContainer().UpsertItemAsync(user, new PartitionKey(user.Id));
     }
 
     public async Task Delete(string userId)
@@ -30,7 +30,7 @@ public class UserCosmosRepo(CosmosConnectionFactory connectionFactory):IUserRepo
 
     public async Task Create(User user)
     {
-        await connectionFactory.GetContainer().CreateItemAsync(user, new PartitionKey(user.UserId));
+        await connectionFactory.GetContainer().CreateItemAsync(user, new PartitionKey(user.Id));
     }
 
     public async Task<User?> View(string userId)
