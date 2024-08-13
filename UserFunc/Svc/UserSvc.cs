@@ -14,5 +14,13 @@ public class UserSvc(
     {
         return repo.Create(user);
     }
+    public Task Update(User user)
+    {
+        return repo.Update(user);
+    }
+    public Task Delete(string id)
+    {
+        return repo.Delete(id);
+    }
 }
 

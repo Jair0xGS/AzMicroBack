@@ -30,9 +30,7 @@ public class UserFunctions(
     public async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
     {
         logger.LogInformation("Create User http trigger");
-        var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        var newUser = JsonConvert.DeserializeObject<User>(requestBody);
-
+        var newUser = await ExtractFromBody<User>(req);
         if (newUser is null || string.IsNullOrEmpty(newUser.Id))
         {
             return new BadRequestObjectResult("Invalid user data.");
@@ -45,6 +43,40 @@ public class UserFunctions(
     public async Task<IActionResult> Update([HttpTrigger(AuthorizationLevel.Function, "put")] HttpRequest req)
     {
         logger.LogInformation("UpdateUser http trigger");
-        return new OkObjectResult(await userSvc.SimpleList());
+        var newUser = await ExtractFromBody<User>(req);
+        if (newUser is null || string.IsNullOrEmpty(newUser.Id))
+        {
+            return new BadRequestObjectResult("Invalid user data.");
+        }
+        await userSvc.Update(newUser);
+        return new OkObjectResult("success");
+    }
+
+    [Function("DeleteUser")]
+    public async Task<IActionResult> DeleteUser(
+        [HttpTrigger(
+            AuthorizationLevel.Function, 
+            "delete",
+            Route = "DeleteUser/{id}"
+            )
+        ] 
+        HttpRequest req,
+        string id
+        )
+    {
+        logger.LogInformation("UpdateUser http trigger");
+        if (string.IsNullOrEmpty(id))
+        {
+            return new BadRequestObjectResult("User id is required.");
+        }
+
+        await userSvc.Delete(id);
+        return new OkObjectResult("success");
+    }
+
+    private static async Task<T?> ExtractFromBody<T>(HttpRequest req)
+    {
+        var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        return JsonConvert.DeserializeObject<T>(requestBody);
     }
 }
