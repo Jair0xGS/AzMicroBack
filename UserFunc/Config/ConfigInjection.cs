@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace UserFunc.Config;
 
@@ -12,7 +11,9 @@ public static class ConfigInjection
   )
   {
     services
-      .AddCosmos(configuration);
+      // .AddCosmos(configuration)
+      .AddRedis(configuration)
+      ;
     return services;
   }
 
@@ -28,6 +29,17 @@ public static class ConfigInjection
     var cConfig = configuration.GetSection(CosmosConfig.SectionName).Get<CosmosConfig>();
     if(cConfig != null) services.AddSingleton(cConfig);
     //create the connection
+    return services;
+  }
+  
+
+  private static IServiceCollection AddRedis(
+    this IServiceCollection services,
+    IConfigurationRoot configuration
+  )
+  {
+    var rConfig = configuration.GetSection(RedisConfig.SectionName).Get<RedisConfig>();
+    if(rConfig != null) services.AddSingleton(rConfig);
     return services;
   }
 
