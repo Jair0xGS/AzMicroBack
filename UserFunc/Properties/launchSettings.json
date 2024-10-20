@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "UserFunc": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7132",
-      "launchBrowser": false
-    }
-  }
-}
