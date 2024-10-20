@@ -22,4 +22,8 @@ public record User(Guid Id, string Name, string LastName, string Email, string P
             );
         return rs;
     }
+    public static UserResponse ToResponse(User user)
+    {
+        return new UserResponse(user.Id, user.Name, user.LastName, user.Email);
+    }
 }

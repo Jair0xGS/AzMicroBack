@@ -10,7 +10,7 @@ public class UserUc(IUserRepo repo)
 {
     public async Task<ErrorOr<Created>> Create(UserCreateCommand dto)
     {
-        var prev = await GetByEmail(dto.Email);
+        var prev = await repo.GetByEmail(dto.Email);
         if (prev.IsError && prev.FirstError == GErrors.User.UserNotFound)
         {
             return await repo.Create(User.FromCommand(dto));
@@ -18,14 +18,15 @@ public class UserUc(IUserRepo repo)
         return GErrors.User.EmailExists;
     }
     
-    public Task<List<User>> List()
+    public async Task<List<UserResponse>> List()
     {
-        return repo.List();
+        var elems = await repo.List();
+        return elems.Select(User.ToResponse).ToList();
     }
     
     public async Task<ErrorOr<Updated>> Update(UserUpdateCommand command)
     {
-        var user = await Get(command.Id);
+        var user = await repo.Get(command.Id);
         if (user.IsError) return user.FirstError;
         return await repo.Update(user.Value with
         {
@@ -40,19 +41,17 @@ public class UserUc(IUserRepo repo)
         return repo.Delete(id);
     }
     
-    public Task<ErrorOr<User>> Get(Guid id)
+    public async Task<ErrorOr<UserResponse>> Get(Guid id)
     {
-        return repo.Get(id);
+        var reg =await repo.Get(id);
+        if (reg.IsError) return reg.FirstError;
+        return User.ToResponse(reg.Value);
     }
     
-    public Task<ErrorOr<User>> GetByEmail(string email)
-    {
-        return repo.GetByEmail(email);
-    }
     
     public async Task<ErrorOr<Updated>> UpdatePassword(Guid id,string newPassword)
     {
-        var user = await Get(id);
+        var user = await repo.Get(id);
         if (user.IsError) return user.FirstError;
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
         return await repo.Update(user.Value with
