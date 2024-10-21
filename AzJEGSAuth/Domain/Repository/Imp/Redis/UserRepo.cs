@@ -78,7 +78,6 @@ public class UserRepo(RedisConnection redisConnection):IUserRepo
 
     public async Task<ErrorOr<Created>> Create(User user)
     {
-        Console.WriteLine(JsonSerializer.Serialize(user));
         await  Write($"{key}:{user.Id}",user,null);
         return Result.Created;
     }    
